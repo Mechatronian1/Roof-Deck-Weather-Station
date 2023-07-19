@@ -2,8 +2,12 @@
 #include <WiFiNINA.h>
 #include <Firebase_Arduino_WiFiNINA.h>
 #include <credentials.h>
+#include <RTCZero.h>
 
 FirebaseData firebasedata;
+RTCZero rtc;
+
+const int GMT = 2;
 
 void setup() {
   //Initialize serial connection
@@ -38,9 +42,73 @@ if (Firebase.setFloat(firebasedata, "/temperature/day_time", 123.456789)){
     Serial.println(firebasedata.errorReason());
 }
 
+
+  //Initialize RTC Clock
+  rtc.begin();
+  //rtc.setEpoch(1451606400);
+
+}
+
+//Print digits function for testing time display - likely to be removed later
+void print2digits(int number) {
+  if (number < 10) {
+    Serial.print("0");
+  }
+  Serial.print(number);
+}
+
+void printTime()
+{
+  print2digits(rtc.getHours() + GMT);
+  Serial.print(":");
+  print2digits(rtc.getMinutes());
+  Serial.print(":");
+  print2digits(rtc.getSeconds());
+  Serial.println();
+}
+
+void printDate()
+{
+  Serial.print(rtc.getDay());
+  Serial.print("/");
+  Serial.print(rtc.getMonth());
+  Serial.print("/");
+  Serial.print(rtc.getYear());
+  Serial.print(" ");
 }
 
 void loop() {
-  //Serial.println("Hello World");
+    printDate();
+
+  printTime();
+
+  Serial.println();
+
   delay(1000);
+/*   //Serial.println("Hello World");
+    Serial.print("Unix time = ");
+  Serial.println(rtc.getEpoch());
+
+  Serial.print("Seconds since Jan 1 2000 = ");
+  Serial.println(rtc.getY2kEpoch());
+
+  // Print date...
+  Serial.print(rtc.getDay());
+  Serial.print("/");
+  Serial.print(rtc.getMonth());
+  Serial.print("/");
+  Serial.print(rtc.getYear());
+  Serial.print("\t");
+
+  // ...and time
+  print2digits(rtc.getHours());
+  Serial.print(":");
+  print2digits(rtc.getMinutes());
+  Serial.print(":");
+  print2digits(rtc.getSeconds());
+
+  Serial.println();
+  delay(1000); */
 }
+
+
